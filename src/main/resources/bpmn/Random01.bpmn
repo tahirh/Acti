@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+        xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+        xmlns:activiti="http://activiti.org/bpmn"
+        targetNamespace="test">
+
+    <process id="randomTest">
+        <startEvent id="start"/>
+        <serviceTask id="random" activiti:expression="#{randomBean.falseOrTrue()}" activiti:resultVariable="randomValue"/>
+        <exclusiveGateway id="gateway"/>
+        <scriptTask id="wasTrue" scriptFormat="groovy">
+            <script>println("It was true")</script>
+        </scriptTask>
+        <scriptTask id="wasFalse" scriptFormat="groovy">
+            <script>println("It was false")</script>
+        </scriptTask>
+        <endEvent id="end"/>
+
+        <sequenceFlow sourceRef="start" targetRef="random"/>
+        <sequenceFlow sourceRef="random" targetRef="gateway"/>
+        <sequenceFlow sourceRef="gateway" targetRef="wasTrue">
+            <conditionExpression>${randomValue}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow sourceRef="gateway" targetRef="wasFalse">
+            <conditionExpression>${!randomValue}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow sourceRef="wasTrue" targetRef="end"/>
+        <sequenceFlow sourceRef="wasFalse" targetRef="end"/>
+    </process>
+</definitions>

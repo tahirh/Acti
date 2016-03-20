@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+        xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+        xmlns:activiti="http://activiti.org/bpmn"
+        targetNamespace="test">
+
+    <process id="beanProvider" name="Test the Provider" isExecutable="true">
+        <startEvent id="start" />
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="beanInit" />
+        <serviceTask id="beanInit" activiti:expression="#{beanProvider.testBeanInit()}" activiti:resultVariable="text"/>
+        <sequenceFlow id="flow2" sourceRef="beanInit" targetRef="afterInit" />
+        <scriptTask id="afterInit" scriptFormat="groovy">
+            <script>println('@init: '+text)</script>
+        </scriptTask>
+        <sequenceFlow sourceRef="afterInit" targetRef="beanTest"/>
+        <serviceTask id="beanTest" activiti:expression="#{beanProvider.testBeanTest(text)}" activiti:resultVariable="text" />
+        <sequenceFlow id="flow3" sourceRef="beanTest" targetRef="afterTest" />
+        <scriptTask id="afterTest" scriptFormat="groovy">
+            <script>println('@test: '+text)</script>
+        </scriptTask>
+        <sequenceFlow id="flow4" sourceRef="afterTest" targetRef="end"/>
+        <endEvent id="end" />
+    </process>
+
+</definitions>
