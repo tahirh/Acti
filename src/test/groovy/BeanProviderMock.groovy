@@ -52,7 +52,7 @@ class BeanProviderMock extends Specification {
             init() >> 'Mock init'
             test(_) >> 'Mock test'
         }
-        registerBean('testBean', testBean)
+//        registerBean('testBean', testBean)
     }
 
     def createBeanProvider() {
