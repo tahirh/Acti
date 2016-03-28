@@ -6,20 +6,20 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:activiti-context.xml")
+@ContextConfiguration(locations = "classpath:application-context.xml")
 public class TestBeanJUnitMock {
     @Autowired
     ApplicationContext applicationContext;
@@ -50,8 +50,11 @@ public class TestBeanJUnitMock {
     }
 
     private void registerBean(String beanName, Object beanInstance) {
-        ConfigurableBeanFactory configurableBeanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
-        configurableBeanFactory.registerSingleton(beanName, beanInstance);
+        BeanFactory beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
+        if (beanFactory.containsBean(beanName)){
+            ((BeanDefinitionRegistry) beanFactory).removeBeanDefinition(beanName);
+        }
+        ((ConfigurableBeanFactory) beanFactory).registerSingleton(beanName, beanInstance);
     }
 
     private void deploy(){
